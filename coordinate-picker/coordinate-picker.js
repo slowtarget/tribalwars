@@ -1,6 +1,7 @@
-/*javascript:
+/*
+javascript:
 var formats = ["{coord} ","{image} {NL} {index} {coord} {owner} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {ownerid} {villageid} {tribeid}"];
-$.getScript("https://ben.wtb.cc//maps.js"); 
+$.getScript("https://https://raw.githubusercontent.com/slowtarget/tribalwars/develop/coordinate-picker/coordinate-picker.js"); 
 void(0);
 */
 const formats = ["{coord} ","{image} {NL} {index} {coord} {owner} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {ownerid} {villageid} {tribeid}"];
@@ -35,7 +36,7 @@ $(document).ready(function () {
                 const owner = village.owner == 0 ? undefined : TWMap.players[village.owner];
                 const tribeId = owner ? owner.ally : undefined;
                 const tribe = tribeId ? TWMap.allies[tribeId] : undefined;
-
+                console.log(pos,village,owner,tribe);
                 const values = {
                     coord: pos.join("|"),
                     player: village.owner !== 0 ? TWMap.players[village.owner] : "",
