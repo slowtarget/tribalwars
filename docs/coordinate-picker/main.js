@@ -5,8 +5,8 @@ $.ajaxSetup({dataType:"script"});
 $.getScript("https://slowtarget.github.io/tribalwars/coordinate-picker/coordinate-picker.js");
 void(0);
 */
-const formats = ["{coord} ","{image} {NL} {index} {coord} {owner} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {ownerid} {villageid} {tribeid}"];
-if (formats === undefined) { var formats = ["K{kk} [coord]{coord}[/coord] {points}{NL\}"]; }
+// const formats = ["{coord} ","{image} {NL} {index} {coord} {owner} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {ownerid} {villageid} {tribeid}"];
+if (formats === undefined) { formats = ["K{kk} [coord]{coord}[/coord] {points}{NL\}"]; }
 const win = (window.frames.length > 0) ? window.main : window;
 const index = 0;
 const outputID = 'villageList';
