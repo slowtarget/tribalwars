@@ -1,19 +1,29 @@
-/*javascript:
-var format = "{image} {NL} {index} {coord} {player} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {playerpoints} {playerid} {villageid} {tribeid}";
+/*javascript:
+var formats = ["{coord} ","{image} {NL} {index} {coord} {player} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {playerpoints} {playerid} {villageid} {tribeid}"];
 $.getScript("https://ben.wtb.cc//maps.js"); 
 void(0);
 */
-
-
-if (format === undefined) { var format = "K{kk} [coord]{coord}[/coord] {points}{NL\}"; }
+if (formats === undefined) { var formats = ["K{kk} [coord]{coord}[/coord] {points}{NL\}"]; }
 var win = (window.frames.length > 0) ? window.main : window;
 var index = 0;
 var outputID = 'villageList';
 $(document).ready(function () {
     if ($('#' + outputID).length <= 0) {
         if (game_data.screen == 'map') {
-            var srcHTML = '<div id="coord_picker">' + '<span style="color:blue;text-decoration:underline;">dalesmckay\'s co-ordinate picker v7.1:</span><br/><br/><textarea id="' + outputID + '" cols="40" rows="10" value="" onFocus="this.select();"/>' + '</div>';
-            ele = win.$('body').append(win.$(srcHTML));
+            const wrapperHTML = "<div id='coord_picker'><span style='color:blue;text-decoration:underline;'>dalesmckay's co-ordinate picker v7.1:</span><br/><br/><div id ='{outputId}'></div></div>"
+                .replace("{outputId\}", outputID);
+            const innerHTML = '<label for="list_{i}">{format}</label><textarea name="list_{i}" id="{outputID}_{i}" cols="40" rows="10" value="" onFocus="this.select();"/>'
+            ele = win.$('#map_config').append(win.$(wrapperHTML));
+            let div = document.getElementById(outputID);
+
+            formats.forEach((format,i)=>{
+                let formatDiv = document.createElement("div");
+                $(formatDiv).append(innerHTML
+                    .replace("{i\}", i)
+                    .replace("{format\}", format));
+            });
+            
+            
             win.TWMap.map._handleClick = function (e) {
                 index++;
                 var pos = this.coordByEvent(e);
@@ -30,13 +40,12 @@ $(document).ready(function () {
                 else {
                     owner = TWMap.players[village.owner];
 
-
-                    if (TWMap.allies[TWMap.players[village.owner]] > 0) {
-                        tribetag = TWMap.allies[TWMap.players[village.owner].ally].tag;
-                        tribename = TWMap.allies[TWMap.players[village.owner].ally].name;
-                        tribepoints = TWMap.allies[TWMap.players[village.owner].ally].points;
+                    if (TWMap.allies[owner] > 0) {
                         ownerally = owner.ally;
-                        tribe = TWMap.allies[TWMap.players[village.owner].ally];
+                        tribe = TWMap.allies[ownerally];
+                        tribetag = tribe.tag;
+                        tribename = tribe.name;
+                        tribepoints = tribe.points;
                     }
                     else {
                         tribe = "";
@@ -50,7 +59,6 @@ $(document).ready(function () {
                 if (village.bonus) {
                     image = village.bonus[1];
                 }
-
 
                 var data = format.replace("{coord\}", coord)
                 .replace("{player\}", ownername)
@@ -79,4 +87,4 @@ $(document).ready(function () {
         }
     }
 });
-void (0);[3~
+void (0);
