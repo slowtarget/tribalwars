@@ -1,7 +1,8 @@
 /*
 javascript:
 var formats = ["{coord} ","{image} {NL} {index} {coord} {owner} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {ownerid} {villageid} {tribeid}"];
-$.getScript("https://https://raw.githubusercontent.com/slowtarget/tribalwars/develop/coordinate-picker/coordinate-picker.js"); 
+$.ajaxSetup({dataType:"script"});
+$.getScript("https://slowtarget.github.io/tribalwars/coordinate-picker/coordinate-picker.js");
 void(0);
 */
 const formats = ["{coord} ","{image} {NL} {index} {coord} {owner} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {ownerid} {villageid} {tribeid}"];
