@@ -1,12 +1,13 @@
 /*javascript:
-var formats = ["{coord} ","{image} {NL} {index} {coord} {player} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {playerpoints} {playerid} {villageid} {tribeid}"];
+var formats = ["{coord} ","{image} {NL} {index} {coord} {owner} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {ownerid} {villageid} {tribeid}"];
 $.getScript("https://ben.wtb.cc//maps.js"); 
 void(0);
 */
+const formats = ["{coord} ","{image} {NL} {index} {coord} {owner} {points} {tag} {tribename} {kk} {x} {y} {tribepoints} {ownerid} {villageid} {tribeid}"];
 if (formats === undefined) { var formats = ["K{kk} [coord]{coord}[/coord] {points}{NL\}"]; }
-var win = (window.frames.length > 0) ? window.main : window;
-var index = 0;
-var outputID = 'villageList';
+const win = (window.frames.length > 0) ? window.main : window;
+const index = 0;
+const outputID = 'villageList';
 $(document).ready(function () {
     if ($('#' + outputID).length <= 0) {
         if (game_data.screen == 'map') {
@@ -21,64 +22,53 @@ $(document).ready(function () {
                 $(formatDiv).append(innerHTML
                     .replace("{i\}", i)
                     .replace("{format\}", format));
+                div.append(formatDiv);
             });
-            
             
             win.TWMap.map._handleClick = function (e) {
                 index++;
-                var pos = this.coordByEvent(e);
-                var x = pos[0];
-                var y = pos[1];
-                var coord = pos.join("|");
-                coordidx = x * 1000 + y,
-                village = TWMap.villages[coordidx];
-                var ownername, ownerpoints, tribetag, tribename, tribepoints, ownerally;
-                if (village.owner == 0) {
-                    ownername = "";
-                    ownerpoints = 0;
-                }
-                else {
-                    owner = TWMap.players[village.owner];
+                const pos = this.coordByEvent(e);
+                const x = pos[0];
+                const y = pos[1];
+                const coordidx = x * 1000 + y,
+                const village = TWMap.villages[coordidx];
+                const owner = village.owner == 0 ? undefined : TWMap.players[village.owner];
+                const tribeId = owner ? owner.ally : undefined;
+                const tribe = tribeId ? TWMap.allies[tribeId] : undefined;
 
-                    if (TWMap.allies[owner] > 0) {
-                        ownerally = owner.ally;
-                        tribe = TWMap.allies[ownerally];
-                        tribetag = tribe.tag;
-                        tribename = tribe.name;
-                        tribepoints = tribe.points;
-                    }
-                    else {
-                        tribe = "";
-                        tribetag = "";
-                        tribename = "";
-                        tribepoints = "";
-                        ownerally = 0;
-                    }
-                }
-                var image = "";
-                if (village.bonus) {
-                    image = village.bonus[1];
-                }
+                const values = {
+                    coord: pos.join("|"),
+                    player: village.owner !== 0 ? TWMap.players[village.owner] : "",
+                    playerpoints: 0,
+                    playerid: village.owner,
+                    villageid: village.id,
+                    points: village.points.replace(".", ""),
+                    tag: tribe ? tribe.tag : "",
+                    tribename: tribe ? tribe.name : "",
+                    tribepoints: tribe ? tribe.points : 0,                    
+                    tribeId : tribeId ? tribeId : "",
+                    x,
+                    y,
+                    kk: TWMap.con.continentByXY(x, y),
+                    image: 'http://' + document.URL.split('/')[2] + '/graphic/' + (village.bonus ? village.bonus[1] : ""),
+                    index,
+                    NL: "\n"
+                };
 
-                var data = format.replace("{coord\}", coord)
-                .replace("{player\}", ownername)
-                .replace("{playerpoints\}", ownerpoints)
-                .replace("{playerid\}", village.owner)
-                .replace("{villageid\}", village.id)
-                .replace("{points\}", village.points.replace(".", ""))
-                .replace("{tag\}", tribetag)
-                .replace("{tribename\}", tribename)
-                .replace("{tribepoints\}", tribepoints)
-                .replace("{tribeid\}", ownerally)
-                .replace("{x\}", x)
-                .replace("{y\}", y)
-                .replace("{kk\}", TWMap.con.continentByXY(x, y))
-                .replace("{image\}", 'http://' + document.URL.split('/')[2] + '/graphic/' + image)
-                .replace("{index\}", index)
-                .replace("{NL\}", "\n");
+                const render_value = function(input, key, value){
+                    return input.replace("{" + key + "\}", value);
+                };
+
+                const render_template = function(template, values) {
+                    let output = template;
+                    Object.getOwnPropertyNames(values).forEach(key => render_value(output, key, values[key]));
+                    return output;
+                };
+
+                formats.forEach((format,i)=>{                                  
+                    document.getElementById(outputID + "_" + i).innerHTML += render_template(format, values) ;
+                });
                 
-                document.getElementById(outputID).innerHTML += data;
-                /* $('#' + outputID).value += data + "\n";*/
                 return false;
             };
         } else {
