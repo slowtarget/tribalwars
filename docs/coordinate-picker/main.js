@@ -32,7 +32,7 @@ $(document).ready(function () {
                 const pos = this.coordByEvent(e);
                 const x = pos[0];
                 const y = pos[1];
-                const coordidx = x * 1000 + y,
+                const coordidx = x * 1000 + y;
                 const village = TWMap.villages[coordidx];
                 const owner = village.owner == 0 ? undefined : TWMap.players[village.owner];
                 const tribeId = owner ? owner.ally : undefined;
